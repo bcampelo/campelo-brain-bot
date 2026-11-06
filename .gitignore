@@ -1,0 +1,13 @@
+node_modules
+auth
+.env
+deploy/.lock
+deploy/update.log
+*.tar.gz
+.DS_Store
+.claude-flow/
+.swarm/
+ruvector.db
+.env.novas
+agentdb.rvf*
+.publico-blocklist.txt

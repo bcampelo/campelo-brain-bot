@@ -1,0 +1,11 @@
+services:
+  brain-bot:
+    build: .
+    container_name: brain-bot
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - TZ=${TZ_NAME:-America/Sao_Paulo}
+      - AUTH_DIR=/app/auth
+    volumes:
+      - ./auth:/app/auth
