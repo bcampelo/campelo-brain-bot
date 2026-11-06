@@ -981,3 +981,31 @@ test('agente: resultado com duvida vira pergunta e a resposta "2" resolve pelo h
   const post = calls.find((c) => c.url.endsWith('/pages'));
   assert.deepEqual(post.body.properties['Matéria'], { relation: [{ id: 'm-sad' }] });
 });
+
+test('descobrir-ids casa títulos de databases com as chaves do .env', async () => {
+  const { casar, tituloDe } = await import('../src/descobrir-ids.js');
+  const ds = (id, nome) => ({ id, title: [{ plain_text: nome }] });
+  const fontes = [
+    ds('i-perfil', 'Perfil'), ds('i-mat', 'Matérias'), ds('i-proj', 'Projetos'), ds('i-liv', 'Livros'),
+    ds('i-aval', 'Avaliações'), ds('i-tar', 'Tarefas'), ds('i-notas', 'Notas'), ds('i-dia', 'Diário'),
+    ds('i-lanc', 'Lançamentos'), ds('i-rec', 'Recompensas'), ds('i-ficha', 'Ficha de treino'), ds('i-areas', 'Áreas'),
+    ds('i-outra', 'Outra coisa qualquer'),
+  ];
+  const r = casar(fontes);
+  assert.equal(tituloDe(fontes[1]), 'Matérias');
+  assert.deepEqual(r.faltando, []);
+  assert.deepEqual(r.ambiguos, {});
+  assert.equal(r.achados.materias, 'i-mat');
+  assert.equal(r.achados.avaliacoes, 'i-aval');
+  assert.equal(r.achados.ficha_treino, 'i-ficha');
+  assert.equal(r.achados.areas, 'i-areas');
+});
+
+test('descobrir-ids avisa de database duplicada ou faltando', async () => {
+  const { casar } = await import('../src/descobrir-ids.js');
+  const ds = (id, nome) => ({ id, title: [{ plain_text: nome }] });
+  const r = casar([ds('a', 'Tarefas'), ds('b', 'Tarefas'), ds('c', 'Minhas Notas')]);
+  assert.deepEqual(r.ambiguos.tarefas.map((x) => x.id), ['a', 'b']);
+  assert.equal(r.achados.notas, 'c'); // título que contém a palavra
+  assert.ok(r.faltando.includes('perfil'));
+});

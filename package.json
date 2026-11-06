@@ -4,7 +4,8 @@
   "description": "Bot de WhatsApp que registra tudo no Campelo Brain (Notion)",
   "scripts": {
     "test": "node --import ./test/setup.js --test test/*.test.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "ids": "node src/descobrir-ids.js"
   },
   "license": "ISC",
   "type": "module",
